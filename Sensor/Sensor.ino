@@ -1,8 +1,20 @@
+#define BLYNK_TEMPLATE_ID "TMPL2dltCiNJb"
+#define BLYNK_TEMPLATE_NAME "Sensor"
+
 #include "DHT.h"
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <WiFi.h>
+#include <BlynkSimpleEsp32.h>
+
+
+
+char auth[] = "N14v8b4V2mngMfSQI3PNS4yh27FTPvSI";  // Lo copias desde tu proyecto en la app
+char ssid[] = "Miravalles";
+char pass[] = "*M1rAv@l_L3$#";
+
 
 #define FLOW_PIN 13
 volatile int pulseCount = 0; 
@@ -27,6 +39,8 @@ LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to 0x27 for a 16 chars
 
 void setup()
 {
+  Blynk.begin(auth,ssid,pass);
+
   pinMode(FLOW_PIN, INPUT_PULLUP);
   lcd.init();                      // initialize the lcd 
   lcd.backlight();
@@ -36,6 +50,8 @@ void setup()
 
 
 void loop(){ 
+Blynk.run();
+
 lcd.setCursor(0,0);
 DS18B20.requestTemperatures();
 read_water_temp = DS18B20.getTempCByIndex(0);
@@ -50,6 +66,7 @@ lcd.print(read_temp);
 delay(2000);
 lcd.clear();
 
+Blynk.virtualWrite(V0,read_temp);
 
   if (millis() - oldTime > 1000) {  // Actualización cada segundo
         detachInterrupt(FLOW_PIN);
@@ -68,3 +85,6 @@ lcd.clear();
     }
     delay(2000);
 }
+
+
+
